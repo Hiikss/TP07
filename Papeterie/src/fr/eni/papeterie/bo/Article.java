@@ -10,16 +10,17 @@ public abstract class Article {
 	private int qteStock;
 	
 	public Article(Integer idArticle, String marque, String ref, String designation, float pu, int qte) {
+		this(marque, ref, designation, pu, qte);
 		setIdArticle(idArticle);
+		
+	}
+	
+	public Article(String marque, String ref, String designation, float pu, int qte) {
 		setMarque(marque);
 		setReference(ref);
 		setDesignation(designation);
 		setPrixUnitaire(pu);
 		setQteStock(qte);
-	}
-	
-	public Article(String marque, String ref, String designation, float pu, int qte) {
-		this(null, marque, ref, designation, pu, qte);
 	}
 	
 	public int getIdArticle() {
