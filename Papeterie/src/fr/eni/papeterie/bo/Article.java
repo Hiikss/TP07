@@ -22,16 +22,16 @@ public abstract class Article {
 		this(null, marque, ref, designation, pu, qte);
 	}
 	
-	@Override
-	public String toString() {
-		return "Article [idArticle=" + idArticle + ", reference=" + reference + ", marque=" + marque + ", designation=" + designation 
-				+ ", prixUnitaire=" + prixUnitaire + ", qteStock=" + qteStock + "]";
-	}
-	
 	public int getIdArticle() {
 		return idArticle;
 	}
 	
+	@Override
+	public String toString() {
+		return "Article [idArticle=" + idArticle + ", reference=" + reference + ", marque=" + marque + ", designation="
+				+ designation + ", prixUnitaire=" + prixUnitaire + ", qteStock=" + qteStock + "]";
+	}
+
 	public void setIdArticle(int idArticle) {
 		this.idArticle = idArticle;
 	}
