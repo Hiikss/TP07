@@ -19,7 +19,7 @@ public class Ligne {
 	}
 	
 	public float getPrix() {
-		return article.getPrixUnitaire();
+		return qte * article.getPrixUnitaire();
 	}
 	
 	public int getQte() {
@@ -32,7 +32,7 @@ public class Ligne {
 	
 	@Override
 	public String toString() {
-		return "Ligne [ qte=" + qte + ", prix=" + article.getPrixUnitaire() + ", article=" + getArticle().toString() + "]";
+		return "Ligne [ qte=" + qte + ", prix=" + this.getPrix() + ", article=" + article.toString() + "]";
 	}
 
 }

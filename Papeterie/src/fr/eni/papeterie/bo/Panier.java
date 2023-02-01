@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Panier {
 
-	private float montant;
 	private List<Ligne> lignesPanier;
 	
 	public Panier() {
@@ -13,11 +12,11 @@ public class Panier {
 	}
 
 	public float getMontant() {
+		float montant = 0f;
+		for(Ligne ligne : lignesPanier) {
+			montant += ligne.getPrix();
+		}
 		return montant;
-	}
-
-	public void setMontant(float montant) {
-		this.montant = montant;
 	}
 	
 	public Ligne getLigne(int index) {
@@ -42,15 +41,12 @@ public class Panier {
 	
 	@Override
 	public String toString() {
-		StringBuffer string = new StringBuffer();
+		String string = "Panier : \n\n";
 		for(Ligne ligne : lignesPanier) {
-			string.append("ligne " + lignesPanier.indexOf(ligne) + " :\t");
-			string.append(ligne.toString());
-			string.append("\n");
+			string += "ligne " + lignesPanier.indexOf(ligne) + " :\t" + ligne.toString() + "\n";
 		}
-		string.append("\nValeur du panier : " + getMontant());
-		string.append("\n\n");
-		return string.toString();
+		string += "\nValeur du panier : " + getMontant() + "\n\n";
+		return string;
 	}
 
 
