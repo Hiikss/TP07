@@ -10,7 +10,8 @@ public class Stylo extends Article {
 	}
 	
 	public Stylo(String marque, String ref, String designation, float pu, int qte, String couleur) {
-		this(null, marque, ref, designation, pu, qte, couleur);
+		super(marque, ref, designation, pu, qte);
+		setCouleur(couleur);
 	}
 	
 	@Override

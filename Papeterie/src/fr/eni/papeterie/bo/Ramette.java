@@ -10,7 +10,8 @@ public class Ramette extends Article {
 	}
 
 	public Ramette(String marque, String ref, String designation, float pu, int qte, int grammage) {
-		this(null, marque, ref, designation, pu, qte, grammage);
+		super( marque, ref, designation, pu, qte);
+		setGrammage(grammage);
 	}
 	
 	@Override
