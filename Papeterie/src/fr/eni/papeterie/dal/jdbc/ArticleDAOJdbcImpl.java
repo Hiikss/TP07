@@ -27,7 +27,7 @@ public class ArticleDAOJdbcImpl {
 	private static final String TYPE_STYLO = "STYLO";
 	private static final String TYPE_RAMETTE = "RAMETTE";
 	
-	private static final String sqlSelectAll = "select idArticle, reference, marque, designation, prixUnitaire, qteStock, grammage, couleur, type from articles";
+	//private static final String sqlSelectAll = "select idArticle, reference, marque, designation, prixUnitaire, qteStock, grammage, couleur, type from articles";
 	private static final String sqlInsert = "insert into articles(reference,marque,designation,prixUnitaire,qteStock,type,grammage,couleur) values(?,?,?,?,?,?,?,?)";
 	
 	private Connection connection;
