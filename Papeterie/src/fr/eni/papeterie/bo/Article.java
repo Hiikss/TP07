@@ -9,6 +9,10 @@ public abstract class Article {
 	private float prixUnitaire;
 	private int qteStock;
 	
+	public Article() {
+		
+	}
+	
 	public Article(Integer idArticle, String marque, String ref, String designation, float pu, int qte) {
 		this(marque, ref, designation, pu, qte);
 		setIdArticle(idArticle);

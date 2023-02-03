@@ -4,6 +4,9 @@ public class Stylo extends Article {
 
 	private String couleur;
 	
+	public Stylo() {
+	}
+	
 	public Stylo(Integer idArticle, String marque, String ref, String designation, float pu, int qte, String couleur) {
 		super(idArticle, marque, ref, designation, pu, qte);
 		setCouleur(couleur);
@@ -13,7 +16,7 @@ public class Stylo extends Article {
 		super(marque, ref, designation, pu, qte);
 		setCouleur(couleur);
 	}
-	
+
 	@Override
 	public String toString() {
 		return super.toString() + " Stylo [Couleur=" + couleur + "]";
