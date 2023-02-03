@@ -1,22 +1,14 @@
 package fr.eni.papeterie.dal;
 
+import fr.eni.papeterie.dal.jdbc.ArticleDAOJdbcImpl;
 
-public class DAOFactory {
+public abstract class DAOFactory {
+	
+	private static ArticleDAO articleDAO;
 	
 	public static ArticleDAO getArticleDAO()  {
-		ArticleDAO articleDAO=null;
-		try {
-			articleDAO=(ArticleDAO ) Class.forName("fr.eni.papeterie.dal.jdbc.ArticleDAOJdbcImpl").newInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if(articleDAO == null)
+			articleDAO = new ArticleDAOJdbcImpl();
 		return articleDAO; 
 	}
 

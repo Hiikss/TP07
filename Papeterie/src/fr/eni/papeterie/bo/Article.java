@@ -23,7 +23,7 @@ public abstract class Article {
 		setQteStock(qte);
 	}
 	
-	public int getIdArticle() {
+	public Integer getIdArticle() {
 		return idArticle;
 	}
 	
@@ -33,7 +33,7 @@ public abstract class Article {
 				+ designation + ", prixUnitaire=" + prixUnitaire + ", qteStock=" + qteStock + "]";
 	}
 
-	public void setIdArticle(int idArticle) {
+	public void setIdArticle(Integer idArticle) {
 		this.idArticle = idArticle;
 	}
 
