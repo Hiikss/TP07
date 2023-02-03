@@ -4,7 +4,6 @@
 package fr.eni.papeterie.dal.jdbc;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,210 +15,381 @@ import java.util.List;
 import fr.eni.papeterie.bo.Article;
 import fr.eni.papeterie.bo.Ramette;
 import fr.eni.papeterie.bo.Stylo;
+import fr.eni.papeterie.dal.ArticleDAO;
 import fr.eni.papeterie.dal.DALException;
+
 
 /**
  * @author Eni Ecole
  * 
  */
-public class ArticleDAOJdbcImpl {
+public class ArticleDAOJdbcImpl implements ArticleDAO {
 
 	private static final String TYPE_STYLO = "STYLO";
 	private static final String TYPE_RAMETTE = "RAMETTE";
+
+	private static final String SELECT_BY_ID = "select idArticle, reference, marque, designation, prixUnitaire, qteStock, grammage, couleur, type " +
+			" from articles where idArticle = ?";
+	private static final String SELECT_ALL = "select idArticle, reference, marque, designation, prixUnitaire, qteStock, grammage, couleur, type " +  
+			" from articles";
+	private static final String UPDATE = "update articles set reference=?,marque=?,designation=?,prixUnitaire=?,qteStock=?,grammage=?,couleur=? where idArticle=?";
+	private static final String INSERT = "insert into articles(reference,marque,designation,prixUnitaire,qteStock,type,grammage,couleur) values(?,?,?,?,?,?,?,?)";
+	private static final String DELETE = "delete from articles where idArticle=?";
+	private static final String SELECT_BY_MARQUE = "select reference, marque, designation, prixUnitaire, qteStock, grammage, couleur, type " + 
+													" from articles where marque = ?";
+	private static final String SELECT_BY_MOT_CLE = "select reference, marque, designation, prixUnitaire, qteStock, grammage, couleur, type " + 
+													" from articles where marque like ? or designation like ?";
 	
-	private static final String sqlSelectAll = "select * from articles";
-	private static final String sqlUpdate = "update articles set reference=?,marque=?,designation=?,prixUnitaire=?,qteStock=?,grammage=?,couleur=? where idArticle=?";
-	private static final String sqlInsert = "insert into articles(reference,marque,designation,prixUnitaire,qteStock,type,grammage,couleur) values(?,?,?,?,?,?,?,?)";
-	private static final String sqlDelete = "delete from articles where reference=?";
-	
-	private Connection connection;
-	
-	public ArticleDAOJdbcImpl() {
-		
-	}
-	
-	public Connection getConnection() throws SQLException {
-		if (connection == null) {
-			String url = "jdbc:sqlserver://localhost:1433;databasename=PAPETERIE_DB;trustServerCertificate=true";
-			connection = DriverManager.getConnection(url, "sa", "Pa$$w0rd");
-		}
-		return connection;
-	}
-	
-	public void closeConnection(){
-		if(connection != null){
+
+	@Override
+	public Article selectById(int id) throws DALException {
+		Connection cnx = null;
+		PreparedStatement rqt = null;
+		ResultSet rs = null;
+		Article art = null;
+		try {
+			cnx = JdbcTools.getConnection();
+			rqt = cnx.prepareStatement(SELECT_BY_ID);
+			rqt.setInt(1, id);
+
+			rs = rqt.executeQuery();
+			if (rs.next()){
+
+				if (TYPE_STYLO.equalsIgnoreCase(rs.getString("type").trim())){
+
+					art = new Stylo(rs.getInt("idArticle"),
+							rs.getString("marque"),
+							rs.getString("reference").trim(),
+							rs.getString("designation"),
+							rs.getFloat("prixUnitaire"),
+							rs.getInt("qteStock"),
+							rs.getString("couleur"));
+				}
+				if (TYPE_RAMETTE.equalsIgnoreCase(rs.getString("type").trim())){
+					art = new Ramette(rs.getInt("idArticle"),
+							rs.getString("marque"),
+							rs.getString("reference").trim(),
+							rs.getString("designation"),
+							rs.getFloat("prixUnitaire"),
+							rs.getInt("qteStock"),
+							rs.getInt("grammage"));
+				}
+			}
+
+		} catch (SQLException e) {
+			throw new DALException("selectById failed - id = " + id , e);
+		} finally {
 			try {
-				connection.close();
+				if (rs != null){
+					rs.close();
+				}
+				if (rqt != null){
+					rqt.close();
+				}
+				if(cnx!=null){
+					cnx.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		return art;
+	}
+
+	@Override
+	public List<Article> selectAll() throws DALException {
+		Connection cnx = null;
+		Statement rqt = null;
+		ResultSet rs = null;
+		List<Article> liste = new ArrayList<Article>();
+		try {
+			cnx = JdbcTools.getConnection();
+			rqt = cnx.createStatement();
+			rs = rqt.executeQuery(SELECT_ALL);
+			Article art = null;
+
+			while (rs.next()) {
+				if (TYPE_STYLO.equalsIgnoreCase(rs.getString("type").trim())){
+
+					art = new Stylo(rs.getInt("idArticle"),
+							rs.getString("marque"),
+							rs.getString("reference").trim(),
+							rs.getString("designation"),
+							rs.getFloat("prixUnitaire"),
+							rs.getInt("qteStock"),
+							rs.getString("couleur"));
+				}
+				if (TYPE_RAMETTE.equalsIgnoreCase(rs.getString("type").trim())){
+					art = new Ramette(rs.getInt("idArticle"),
+							rs.getString("marque"),
+							rs.getString("reference").trim(),
+							rs.getString("designation"),
+							rs.getFloat("prixUnitaire"),
+							rs.getInt("qteStock"),
+							rs.getInt("grammage"));
+				}
+				liste.add(art);
+			}
+		} catch (SQLException e) {
+			throw new DALException("selectAll failed - " , e);
+		} finally {
+			try {
+				if (rs != null){
+					rs.close();
+				}
+				if (rqt != null){
+					rqt.close();
+				}
+				if(cnx!=null){
+					cnx.close();
+				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			connection=null;
 		}
+		return liste;
+
 	}
-	
-	public Article selectById(Integer id) {
-		return null;
-	}
-	
-	public List<Article> selectAll() {
-		List<Article> articles = new ArrayList<Article>();
-		Connection connection = null;
-		Statement stmt = null;
-		ResultSet rs = null;
+
+
+
+	@Override
+	public void update(Article data) throws DALException {
+		Connection cnx = null;
+		PreparedStatement rqt = null;
 		try {
-			connection = getConnection();
-			stmt = connection.createStatement();
-			rs = stmt.executeQuery(sqlSelectAll);
-			Article article = null;
-			while (rs.next()) {
-				if (TYPE_STYLO.equals(rs.getString("type"))) {
-					article = new Stylo(rs.getInt("idArticle"), rs.getString("marque"), rs.getString("reference").trim(), rs.getString("designation"),
-							rs.getFloat("prixUnitaire"), rs.getInt("qteStock"), rs.getString("couleur"));
-				}
-				if (TYPE_RAMETTE.equalsIgnoreCase(rs.getString("type").trim())) {
-					article = new Ramette(rs.getInt("idArticle"), rs.getString("marque"), rs.getString("reference").trim(), rs.getString("designation"), 
-							rs.getFloat("prixUnitaire"), rs.getInt("qteStock"), rs.getInt("grammage"));
-				}
-				articles.add(article);
+			cnx = JdbcTools.getConnection();
+			rqt = cnx.prepareStatement(UPDATE);
+			rqt.setString(1, data.getReference());
+			rqt.setString(2, data.getMarque());
+			rqt.setString(3, data.getDesignation());
+			rqt.setFloat(4, data.getPrixUnitaire());
+			rqt.setInt(5, data.getQteStock());
+			rqt.setInt(8, data.getIdArticle());
+			if (data instanceof Ramette) {
+				Ramette r = (Ramette) data;
+				rqt.setInt(6, r.getGrammage());
+				rqt.setNull(7, Types.VARCHAR);
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if(stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			closeConnection();
-		}
-		return articles;
-	}
-	
-	public void update(Article article) {
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		try {
-			connection = getConnection();
-			stmt = connection.prepareStatement(sqlUpdate);
-			
-			stmt.setString(1, article.getReference());
-			stmt.setString(2, article.getMarque());
-			stmt.setString(3, article.getDesignation());
-			stmt.setFloat(4, article.getPrixUnitaire());
-			stmt.setInt(5, article.getQteStock());
-			//Ajoute les variables propres aux ramettes
-			if(article instanceof Ramette) {
-				Ramette r = (Ramette) article;
-				stmt.setString(6, TYPE_RAMETTE);
-				stmt.setInt(7, r.getGrammage());
-				stmt.setNull(8, Types.VARCHAR);
-			}
-			//Ajoute les variables propres aux stylos
-			else if(article instanceof Stylo) {
-				Stylo s = (Stylo) article;
-				stmt.setString(6, TYPE_STYLO);
-				stmt.setNull(7, Types.INTEGER);
-				stmt.setString(8, s.getCouleur());
-			}
-			
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if(stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			closeConnection();
-		}
-	}
-	
-	public void insert(Article article) throws DALException {
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		try {
-			//Récupération de la connection
-			connection = getConnection();
-			//Préparation de la requête d'insertion
-			stmt = connection.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
-			//Met des valeurs aux variables
-			stmt.setString(1, article.getReference());
-			stmt.setString(2, article.getMarque());
-			stmt.setString(3, article.getDesignation());
-			stmt.setFloat(4, article.getPrixUnitaire());
-			stmt.setInt(5, article.getQteStock());
-			//Ajoute les variables propres aux ramettes
-			if(article instanceof Ramette) {
-				Ramette r = (Ramette) article;
-				stmt.setString(6, TYPE_RAMETTE);
-				stmt.setInt(7, r.getGrammage());
-				stmt.setNull(8, Types.VARCHAR);
-			}
-			//Ajoute les variables propres aux stylos
-			else if(article instanceof Stylo) {
-				Stylo s = (Stylo) article;
-				stmt.setString(6, TYPE_STYLO);
-				stmt.setNull(7, Types.INTEGER);
-				stmt.setString(8, s.getCouleur());
+			if (data instanceof Stylo) {
+				Stylo s = (Stylo) data;
+				rqt.setNull(6, Types.INTEGER);
+				rqt.setString(7, s.getCouleur());
 			}
 
-			int nbRows = stmt.executeUpdate();
-			if(nbRows == 1) {
-				ResultSet rs = stmt.getGeneratedKeys();
-				if (rs.next()) {
-					article.setIdArticle(rs.getInt(1));
-				}
-
-			}
+			rqt.executeUpdate();
 
 		} catch (SQLException e) {
-			throw new DALException("Insert article failed - " + article, e);
+			throw new DALException("Update article failed - " + data, e);
 		} finally {
 			try {
-				if (stmt != null) {
-					stmt.close();
+				if (rqt != null){
+					rqt.close();
 				}
-				
+				if(cnx !=null){
+					cnx.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
+	@Override
+	public void insert(Article data) throws DALException {
+		Connection cnx = null;
+		PreparedStatement rqt = null;
+		try {
+			cnx = JdbcTools.getConnection();
+			rqt = cnx.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+			rqt.setString(1, data.getReference());
+			rqt.setString(2, data.getMarque());
+			rqt.setString(3, data.getDesignation());
+			rqt.setFloat(4, data.getPrixUnitaire());
+			rqt.setInt(5, data.getQteStock());
+			if (data instanceof Ramette) {
+				Ramette r= (Ramette) data;
+				rqt.setString(6, TYPE_RAMETTE);
+				rqt.setInt(7, r.getGrammage());
+				rqt.setNull(8, Types.VARCHAR);
+			}
+			if (data instanceof Stylo) {
+				Stylo s = (Stylo) data;
+				rqt.setString(6, TYPE_STYLO);
+				rqt.setNull(7, Types.INTEGER);
+				rqt.setString(8, s.getCouleur());
+			}
+
+			int nbRows = rqt.executeUpdate();
+			if(nbRows == 1){
+				ResultSet rs = rqt.getGeneratedKeys();
+				if(rs.next()){
+					data.setIdArticle(rs.getInt(1));
+				}
+
+			}
+
+		}catch(SQLException e){
+			throw new DALException("Insert article failed - " + data, e);
+		}
+		finally {
+			try {
+				if (rqt != null){
+					rqt.close();
+				}
+				if(cnx!=null){
+					cnx.close();
+				}
 			} catch (SQLException e) {
 				throw new DALException("close failed - ", e);
 			}
-			closeConnection();
 
 		}
 	}
-	
-	public void delete(int id) {
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		try {
-			connection = getConnection();
-			stmt = connection.prepareStatement(sqlDelete);
-			stmt.setInt(1, id);
-			stmt.executeUpdate();
+
+
+
+
+
+	@Override
+	public void delete(int id) throws DALException {
+		Connection cnx = null;
+		PreparedStatement rqt = null;
+		try {		
+			cnx = JdbcTools.getConnection();
+			//l'intégrité référentielle s'occupe d'invalider la suppression
+			//si l'article est référencé dans une ligne de commande
+			rqt = cnx.prepareStatement(DELETE);
+			rqt.setInt(1, id);
+			rqt.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DALException("Delete article failed - id=" + id, e);
 		} finally {
-			if(stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			try {
+				if (rqt != null){
+					rqt.close();
 				}
+				if(cnx!=null){
+					cnx.close();
+				}
+			} catch (SQLException e) {
+				throw new DALException("close failed " , e);
 			}
-			closeConnection();
-		}
+
+		}		
 	}
 
+	@Override
+	public List<Article> selectByMarque(String marque) throws DALException {
+		Connection cnx = null;
+		PreparedStatement rqt = null;
+		ResultSet rs = null;
+		List<Article> liste = new ArrayList<Article>();
+		try {
+			cnx = JdbcTools.getConnection();
+			rqt = cnx.prepareStatement(SELECT_BY_MARQUE);
+			rqt.setString(1, marque);
+			rs = rqt.executeQuery();
+			Article art = null;
+
+			while (rs.next()) {
+				if (TYPE_STYLO.equalsIgnoreCase(rs.getString("type").trim())){
+
+					art = new Stylo(rs.getInt("idArticle"),
+							rs.getString("marque"),
+							rs.getString("reference").trim(),
+							rs.getString("designation"),
+							rs.getFloat("prixUnitaire"),
+							rs.getInt("qteStock"),
+							rs.getString("couleur"));
+				}
+				if (TYPE_RAMETTE.equalsIgnoreCase(rs.getString("type").trim())){
+					art = new Ramette(rs.getInt("idArticle"),
+							rs.getString("marque"),
+							rs.getString("reference").trim(),
+							rs.getString("designation"),
+							rs.getFloat("prixUnitaire"),
+							rs.getInt("qteStock"),
+							rs.getInt("grammage"));
+				}
+				liste.add(art);
+			}
+		} catch (SQLException e) {
+			throw new DALException("selectByMarque failed - " , e);
+		} finally {
+			try {
+				if (rs != null){
+					rs.close();
+				}
+				if (rqt != null){
+					rqt.close();
+				}
+				if(cnx!=null){
+					cnx.close();
+				}
+			} catch (SQLException e) {
+				throw new DALException("close failed " , e);
+			}
+		}
+		return liste;
+	}
+
+	@Override
+	public List<Article> selectByMotCle(String motCle) throws DALException {
+		Connection cnx = null;
+		PreparedStatement rqt = null;
+		ResultSet rs = null;
+		List<Article> liste = new ArrayList<Article>();
+		try {
+			cnx = JdbcTools.getConnection();
+			rqt = cnx.prepareStatement(SELECT_BY_MOT_CLE);
+			rqt.setString(1, motCle);
+			rs = rqt.executeQuery();
+			Article art = null;
+
+			while (rs.next()) {
+				if (TYPE_STYLO.equalsIgnoreCase(rs.getString("type").trim())){
+
+					art = new Stylo(rs.getInt("idArticle"),
+							rs.getString("marque"),
+							rs.getString("reference").trim(),
+							rs.getString("designation"),
+							rs.getFloat("prixUnitaire"),
+							rs.getInt("qteStock"),
+							rs.getString("couleur"));
+				}
+				if (TYPE_RAMETTE.equalsIgnoreCase(rs.getString("type").trim())){
+					art = new Ramette(rs.getInt("idArticle"),
+							rs.getString("marque"),
+							rs.getString("reference").trim(),
+							rs.getString("designation"),
+							rs.getFloat("prixUnitaire"),
+							rs.getInt("qteStock"),
+							rs.getInt("grammage"));
+				}
+				liste.add(art);
+			}
+		} catch (SQLException e) {
+			throw new DALException("selectByMotCle failed - " , e);
+		} finally {
+			try {
+				if (rs != null){
+					rs.close();
+				}
+				if (rqt != null){
+					rqt.close();
+				}
+				if(cnx!=null){
+					cnx.close();
+				}
+			} catch (SQLException e) {
+				throw new DALException("close failed " , e);
+			}
+		}
+		return liste;
+	}
 }
