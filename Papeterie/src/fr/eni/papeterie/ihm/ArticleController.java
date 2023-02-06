@@ -125,5 +125,9 @@ public class ArticleController {
 		
 	}
 
+	public List<Article> getCatalogue() {
+		return catalogue;
+	}
+
 
 }
