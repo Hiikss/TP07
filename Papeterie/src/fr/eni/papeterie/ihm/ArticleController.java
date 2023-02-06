@@ -6,6 +6,7 @@ import java.util.List;
 import fr.eni.papeterie.bll.BLLException;
 import fr.eni.papeterie.bll.CatalogueManager;
 import fr.eni.papeterie.bo.Article;
+import fr.eni.papeterie.ihm.ecrCatalogue.EcranCatalogue;
 
 public class ArticleController {
 	
@@ -48,6 +49,9 @@ public class ArticleController {
 		
 		afficherPremierArticle();
 		ecranArticle.setVisible(true);
+		
+		EcranCatalogue ecrCatalogue = new EcranCatalogue();
+		ecrCatalogue.setVisible(true);
 	}
 	
 	public void afficherPremierArticle(){
