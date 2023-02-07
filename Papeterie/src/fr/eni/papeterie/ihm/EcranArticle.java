@@ -1,16 +1,11 @@
 package fr.eni.papeterie.ihm;
 
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -34,14 +29,9 @@ public class EcranArticle extends JFrame {
 	private JRadioButton radioRamette, radioStylo;
 	private JCheckBox check80, check100;
 	private JComboBox<String> cboCouleur;
-	private JPanel panelType, panelGrammage, panelBouton;
-	private JButton btnPrecedent, btnNouveau, btnSauvegarder, btnSupprimer, btnSuivant;
+	private JPanel panelType, panelGrammage;
 	
-	private ImageIcon imgPrecedent = new ImageIcon(this.getClass().getResource("resources/Back24.gif"));
-	private ImageIcon imgNouveau = new ImageIcon(this.getClass().getResource("resources/New24.gif"));
-	private ImageIcon imgSauvegarder = new ImageIcon(this.getClass().getResource("resources/Save24.gif"));
-	private ImageIcon imgSupprimer = new ImageIcon(this.getClass().getResource("resources/Delete24.gif"));
-	private ImageIcon imgSuivant = new ImageIcon(this.getClass().getResource("resources/Forward24.gif"));
+	private PanelBoutons panelBoutons;
 	
 	private Integer idCourant;
 
@@ -253,88 +243,42 @@ public class EcranArticle extends JFrame {
 	}
 	
 	public JPanel getPanelBouton() {
-		if(panelBouton == null) {
-			panelBouton = new JPanel();
-			panelBouton.setLayout(new FlowLayout());
-			panelBouton.add(getBtnPrecedent());
-			panelBouton.add(getBtnNouveau());
-			panelBouton.add(getBtnSauvegarder());
-			panelBouton.add(getBtnSupprimer());
-			panelBouton.add(getBtnSuivant());
-		}
-		return panelBouton;
-	}
+		if(panelBoutons == null) {
+			panelBoutons = new PanelBoutons();
+			panelBoutons.addPanelBoutonObserver(new IPanelBoutonsObserver(){
 
-	public JButton getBtnPrecedent() {
-		if(btnPrecedent == null) {
-			btnPrecedent = new JButton();
-			btnPrecedent.setIcon(imgPrecedent);
-			btnPrecedent.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					ArticleController.get().precedent();
+				public void precedent() {
+					ArticleController.get().precedent();					
 				}
-			});
-		}
-		return btnPrecedent;
-	}
 
-	public JButton getBtnNouveau() {
-		if(btnNouveau == null) {
-			btnNouveau = new JButton();
-			btnNouveau.setIcon(imgNouveau);
-			btnNouveau.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					ArticleController.get().nouveau();
-				}
-			});
-		}
-		return btnNouveau;
-	}
-
-	public JButton getBtnSauvegarder() {
-		if(btnSauvegarder == null) {
-			btnSauvegarder = new JButton();
-			btnSauvegarder.setIcon(imgSauvegarder);
-			btnSauvegarder.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					ArticleController.get().sauvegarder();
-				}
-			});
-		}
-		return btnSauvegarder;
-	}
-
-	public JButton getBtnSupprimer() {
-		if(btnSupprimer == null) {
-			btnSupprimer = new JButton();
-			btnSupprimer.setIcon(imgSupprimer);
-			btnSupprimer.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					ArticleController.get().supprimer();
-				}
-			});
-		}
-		return btnSupprimer;
-	}
-
-	public JButton getBtnSuivant() {
-		if(btnSuivant == null) {
-			btnSuivant = new JButton();
-			btnSuivant.setIcon(imgSuivant);
-			btnSuivant.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void suivant() {
 					ArticleController.get().suivant();
 				}
+
+				@Override
+				public void nouveau() {
+					ArticleController.get().nouveau();
+					
+				}
+
+				@Override
+				public void enregistrer() {
+					ArticleController.get().enregistrer();
+					
+				}
+
+				@Override
+				public void supprimer() {
+					ArticleController.get().supprimer();
+				}
+				
 			});
 		}
-		return btnSuivant;
+		return panelBoutons;
 	}
-	
+
 	public void afficherNouveau() {
 		// Par défaut un article est une rammette
 		Ramette a = new Ramette(null, "", "", "", 0.0f, 0, 0);
@@ -399,7 +343,7 @@ public class EcranArticle extends JFrame {
 	}
 
 	public void enregistrer() {
-		ArticleController.get().sauvegarder();
+		ArticleController.get().enregistrer();
 
 	}
 

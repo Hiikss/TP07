@@ -87,7 +87,7 @@ public class ArticleController {
 		
 	}
 
-	public void sauvegarder() {
+	public void enregistrer() {
 		Article articleAffiche = ecranArticle.getArticle();
 		
 		try {
