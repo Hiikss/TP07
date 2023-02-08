@@ -8,7 +8,7 @@ public abstract class DAOFactory {
 	
 	public static ArticleDAO getArticleDAO()  {
 		if(articleDAO == null)
-			articleDAO = new ArticleDAOJdbcImpl();
+			articleDAO = (ArticleDAO) new ArticleDAOJdbcImpl();
 		return articleDAO; 
 	}
 

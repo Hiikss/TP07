@@ -42,7 +42,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	
 
 	@Override
-	public Article selectById(int id) throws DALException {
+	public Article selectById(Article article) throws DALException {
 		Connection cnx = null;
 		PreparedStatement rqt = null;
 		ResultSet rs = null;
@@ -50,7 +50,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		try {
 			cnx = JdbcTools.getConnection();
 			rqt = cnx.prepareStatement(SELECT_BY_ID);
-			rqt.setInt(1, id);
+			rqt.setInt(1, article.getIdArticle());
 
 			rs = rqt.executeQuery();
 			if (rs.next()){
@@ -77,7 +77,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			}
 
 		} catch (SQLException e) {
-			throw new DALException("selectById failed - id = " + id , e);
+			throw new DALException("selectById failed - id = " + article.getIdArticle() , e);
 		} finally {
 			try {
 				if (rs != null){
@@ -256,7 +256,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 
 
 	@Override
-	public void delete(int id) throws DALException {
+	public void delete(Article article) throws DALException {
 		Connection cnx = null;
 		PreparedStatement rqt = null;
 		try {		
@@ -264,10 +264,10 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			//l'intégrité référentielle s'occupe d'invalider la suppression
 			//si l'article est référencé dans une ligne de commande
 			rqt = cnx.prepareStatement(DELETE);
-			rqt.setInt(1, id);
+			rqt.setInt(1, article.getIdArticle());
 			rqt.executeUpdate();
 		} catch (SQLException e) {
-			throw new DALException("Delete article failed - id=" + id, e);
+			throw new DALException("Delete article failed - id=" + article.getIdArticle(), e);
 		} finally {
 			try {
 				if (rqt != null){

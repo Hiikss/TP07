@@ -35,7 +35,7 @@ public class AppliTestDAL {
 
 			//Sélection de l'article par id
 			//TODO...
-			Article a = articleDAO.selectById(a2.getIdArticle());
+			Article a = articleDAO.selectById(a2);
 			System.out.println("Sélection de l'article par id  : " + a.toString() );
 
 			//Sélection de tous les articles
@@ -57,7 +57,7 @@ public class AppliTestDAL {
 			//Suppression d'un article
 			//TODO...
 			System.out.println("Suppression de l'article  : " + a1.toString());
-			articleDAO.delete(a1.getIdArticle());
+			articleDAO.delete(a1);
 			articles = articleDAO.selectAll();
 			//System.out.println("Liste des articles après suppression : " + articles.toString() );
 			System.out.println("Liste des articles après suppression : "  );

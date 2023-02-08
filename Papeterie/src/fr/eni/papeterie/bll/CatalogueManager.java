@@ -52,7 +52,7 @@ public class CatalogueManager {
 
 	public void removeArticle(Article a) throws BLLException {
 		try {
-			daoArticle.delete(a.getIdArticle());
+			daoArticle.delete(a);
 		} catch (DALException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -94,16 +94,5 @@ public class CatalogueManager {
 			if(!valide){
 				throw new BLLException(sb.toString());
 			}
-	}
-	
-	public Article getArticle(int index) throws BLLException {
-		Article article = null;
-		try {
-			article = daoArticle.selectById(index);
-		} catch (DALException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return article;
 	}
 }
